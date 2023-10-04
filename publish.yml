@@ -1,0 +1,28 @@
+### Requirements ###
+# 1) Publisher Setup
+# https://docs.pypi.org/trusted-publishers/adding-a-publisher/
+# 2) Update project name
+#   Change `project_name` to your project's name on line 16
+
+name: Publish to PyPI.org
+on:
+  release:
+    types: [published]
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project-name: ["project_name"]
+
+    environment:
+      name: releases
+      url: https://pypi.org/project/${{ matrix.project-name }}/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: python3 -m pip install --upgrade build && python3 -m build
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1
